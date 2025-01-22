@@ -36,21 +36,7 @@ const data = {
       state: "M",
     },
   ],
-
   tree: [
-    [
-      "src-tauri", // Tauri-specific folder
-      [
-        "icons", // Icons for the Tauri app
-        "icon.png",
-      ],
-      "src", // Rust source code
-      [
-        "main.rs", // Entry point for the Rust backend
-        "tauri.conf.json", // Tauri configuration file
-      ],
-      "Cargo.toml", // Rust project configuration
-    ],
     [
       "app",
       [
@@ -63,7 +49,7 @@ const data = {
     ],
     [
       "components",
-      ["ui", "button.tsx", "card.tsx", "Kanagawa.txt"],
+      ["ui", "button.tsx", "card.tsx"],
       "header.tsx",
       "footer.tsx",
     ],
@@ -75,8 +61,7 @@ const data = {
     "tailwind.config.js",
     "package.json",
     "README.md",
-  ]
-
+  ],
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import Editor from "@monaco-editor/react";
 import "./input.css";
 import { AppSidebar } from "@/components/app-sidebar"
 import {
@@ -18,21 +19,30 @@ import {
 } from "@/components/ui/sidebar"
 
 function App() {
-
-  const [markdownContent, setMarkdownContent] = useState("");
+  const [fileContent, setFileContent] = useState("");
+  const [filePath, setFilePath] = useState("/home/guri/Projects/note-taking-app/rusen/test.md");
 
   useEffect(() => {
-    // Replace with the path to your markdown file
-    const filePath = "/home/guri/Projects/note-taking-app/rusen/test.md";
-
-    invoke<string>("render_markdown", { filePath }) // Explicitly specify the return type as string
-      .then((html) => {
-        setMarkdownContent(html); // Now TypeScript knows `html` is a string
+    invoke<string>("read_file", { path: filePath })
+      .then((content) => {
+        setFileContent(content);
       })
       .catch((error) => {
-        console.error("Failed to render markdown:", error);
+        console.error("Failed to read file:", error);
       });
-  }, []);
+  }, [filePath]);
+
+  const handleEditorChange = (value: string | undefined) => {
+    if (value !== undefined) {
+      setFileContent(value);
+    }
+  };
+
+  const saveFile = () => {
+    invoke<void>("save_file", { path: filePath, content: fileContent })
+      .then(() => console.log("File saved successfully"))
+      .catch((error) => console.error("Failed to save file:", error));
+  };
 
   return (
     <>
@@ -57,12 +67,35 @@ function App() {
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
+            <button
+              onClick={saveFile}
+              className="ml-4 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Save
+            </button>
           </header>
           <div className="flex flex-1 flex-col gap-4 p-4">
-            <div
-              className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min p-4"
-              dangerouslySetInnerHTML={{ __html: markdownContent }}
-            />
+            <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50">
+              <Editor
+                height="100vh"
+                defaultLanguage="plaintext"
+                value={fileContent}
+                onChange={handleEditorChange}
+                options={{
+                  minimap: { enabled: false },
+                  scrollBeyondLastLine: false,
+                  automaticLayout: true,
+                  lineNumbers: "on",
+                  roundedSelection: false,
+                  scrollbar: {
+                    horizontalSliderSize: 4,
+                    verticalSliderSize: 8,
+                  },
+                  tabSize: 2,
+                  insertSpaces: true,
+                }}
+              />
+            </div>
           </div>
         </SidebarInset>
       </SidebarProvider>

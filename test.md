@@ -53,3 +53,4 @@ Inline `code` has `back-ticks around` it.
 # Code block
 def hello_world():
     print("Hello, world!")
+```:

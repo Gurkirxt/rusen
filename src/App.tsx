@@ -20,7 +20,7 @@ import {
 
 function App() {
   const [fileContent, setFileContent] = useState("");
-  const [filePath, setFilePath] = useState("/home/guri/Projects/note-taking-app/rusen/test.md");
+  const [filePath, setFilePath] = useState("../test.md");
 
   useEffect(() => {
     invoke<string>("read_file", { path: filePath })
@@ -75,27 +75,25 @@ function App() {
             </button>
           </header>
           <div className="flex flex-1 flex-col gap-4 p-4">
-            <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50">
-              <Editor
-                height="100vh"
-                defaultLanguage="plaintext"
-                value={fileContent}
-                onChange={handleEditorChange}
-                options={{
-                  minimap: { enabled: false },
-                  scrollBeyondLastLine: false,
-                  automaticLayout: true,
-                  lineNumbers: "on",
-                  roundedSelection: false,
-                  scrollbar: {
-                    horizontalSliderSize: 4,
-                    verticalSliderSize: 8,
-                  },
-                  tabSize: 2,
-                  insertSpaces: true,
-                }}
-              />
-            </div>
+            <Editor
+              height="90vh"
+              defaultLanguage="markdown"
+              value={fileContent}
+              onChange={handleEditorChange}
+              options={{
+                minimap: { enabled: false },
+                scrollBeyondLastLine: false,
+                automaticLayout: true,
+                lineNumbers: "on",
+                roundedSelection: false,
+                scrollbar: {
+                  horizontalSliderSize: 4,
+                  verticalSliderSize: 8,
+                },
+                tabSize: 2,
+                insertSpaces: true,
+              }}
+            />
           </div>
         </SidebarInset>
       </SidebarProvider>

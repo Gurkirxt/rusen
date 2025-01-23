@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { Fragment, useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import Editor from "@monaco-editor/react";
 import "./input.css";
@@ -20,17 +20,28 @@ import {
 
 function App() {
   const [fileContent, setFileContent] = useState("");
-  const [filePath, setFilePath] = useState("../test.md");
+  const [filePath, setFilePath] = useState("");
+  const [directoryTree, setDirectoryTree] = useState<any[]>([]);
 
   useEffect(() => {
-    invoke<string>("read_file", { path: filePath })
-      .then((content) => {
-        setFileContent(content);
+    invoke<any[]>("get_directory_tree", { path: "." })
+      .then((tree) => {
+        setDirectoryTree(tree);
       })
-      .catch((error) => {
-        console.error("Failed to read file:", error);
-      });
+      .catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    if (filePath) {
+      invoke<string>("read_file", { path: filePath })
+        .then(setFileContent)
+        .catch(console.error);
+    }
   }, [filePath]);
+
+  const handleFileClick = (path: string) => {
+    setFilePath(path);
+  };
 
   const handleEditorChange = (value: string | undefined) => {
     if (value !== undefined) {
@@ -47,24 +58,23 @@ function App() {
   return (
     <>
       <SidebarProvider>
-        <AppSidebar />
+        <AppSidebar directoryTree={directoryTree} onFileClick={handleFileClick} />
         <SidebarInset>
           <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
             <SidebarTrigger className="-ml-1" />
             <Separator orientation="vertical" className="mr-2 h-4" />
             <Breadcrumb>
               <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">components</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">ui</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>test.md</BreadcrumbPage>
-                </BreadcrumbItem>
+                {filePath.split('/').map((part, index, parts) => (
+                  <Fragment key={index}>
+                    <BreadcrumbItem>
+                      <BreadcrumbLink href="#">
+                        {part}
+                      </BreadcrumbLink>
+                    </BreadcrumbItem>
+                    {index < parts.length - 1 && <BreadcrumbSeparator />}
+                  </Fragment>
+                ))}
               </BreadcrumbList>
             </Breadcrumb>
             <button

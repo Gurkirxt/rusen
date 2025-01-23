@@ -8,7 +8,7 @@ _Tauri-powered desktop app for networked note-taking and idea exploration_
 ![Rusen Interface](demo.png)  
 _Write, link, and visualize notes with native performance_
 
-## 🌟 Core Capabilities
+## 🌟 Planned Capabilities
 
 ### **Networked Notes**
 
@@ -36,13 +36,13 @@ _Write, link, and visualize notes with native performance_
 
 ---
 
-## 🚀 Installation
+## 🚀 Steps to run locally
 
-```bash
+````bash
 # Clone & build (requires Rust + Bun)
-git clone https://github.com/yourusername/rusen.git
+git clone git@github.com:Gurkirxt/rusen.git
 cd rusen && bun install
 
 # Start development mode
-bun run dev & cargo tauri dev
-```
+bun run tauri dev ```
+````

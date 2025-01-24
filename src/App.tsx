@@ -8,7 +8,7 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbPage,
+  // BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Separator } from "@/components/ui/separator"
@@ -17,6 +17,8 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { ThemeProvider } from "@/components/theme-provider"
+import { ModeToggle } from "./components/mode-toggle";
 
 function App() {
   const [fileContent, setFileContent] = useState("");
@@ -57,56 +59,59 @@ function App() {
 
   return (
     <>
-      <SidebarProvider>
-        <AppSidebar directoryTree={directoryTree} onFileClick={handleFileClick} />
-        <SidebarInset>
-          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 h-4" />
-            <Breadcrumb>
-              <BreadcrumbList>
-                {filePath.split('/').map((part, index, parts) => (
-                  <Fragment key={index}>
-                    <BreadcrumbItem>
-                      <BreadcrumbLink href="#">
-                        {part}
-                      </BreadcrumbLink>
-                    </BreadcrumbItem>
-                    {index < parts.length - 1 && <BreadcrumbSeparator />}
-                  </Fragment>
-                ))}
-              </BreadcrumbList>
-            </Breadcrumb>
-            <button
-              onClick={saveFile}
-              className="ml-4 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              Save
-            </button>
-          </header>
-          <div className="flex flex-1 flex-col gap-4 p-4">
-            <Editor
-              height="90vh"
-              defaultLanguage="markdown"
-              value={fileContent}
-              onChange={handleEditorChange}
-              options={{
-                minimap: { enabled: false },
-                scrollBeyondLastLine: false,
-                automaticLayout: true,
-                lineNumbers: "on",
-                roundedSelection: false,
-                scrollbar: {
-                  horizontalSliderSize: 4,
-                  verticalSliderSize: 8,
-                },
-                tabSize: 2,
-                insertSpaces: true,
-              }}
-            />
-          </div>
-        </SidebarInset>
-      </SidebarProvider>
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <SidebarProvider>
+          <AppSidebar directoryTree={directoryTree} onFileClick={handleFileClick} />
+          <SidebarInset>
+            <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+              <SidebarTrigger className="-ml-1" />
+              <Separator orientation="vertical" className="mr-2 h-4" />
+              <Breadcrumb>
+                <BreadcrumbList>
+                  {filePath.split('/').map((part, index, parts) => (
+                    <Fragment key={index}>
+                      <BreadcrumbItem>
+                        <BreadcrumbLink href="#">
+                          {part}
+                        </BreadcrumbLink>
+                      </BreadcrumbItem>
+                      {index < parts.length - 1 && <BreadcrumbSeparator />}
+                    </Fragment>
+                  ))}
+                </BreadcrumbList>
+              </Breadcrumb>
+              <button
+                onClick={saveFile}
+                className="ml-4 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                Save
+              </button>
+              <ModeToggle></ModeToggle>
+            </header>
+            <div className="flex flex-1 flex-col gap-4 p-4">
+              <Editor
+                height="90vh"
+                defaultLanguage="markdown"
+                value={fileContent}
+                onChange={handleEditorChange}
+                options={{
+                  minimap: { enabled: false },
+                  scrollBeyondLastLine: false,
+                  automaticLayout: true,
+                  lineNumbers: "on",
+                  roundedSelection: false,
+                  scrollbar: {
+                    horizontalSliderSize: 4,
+                    verticalSliderSize: 8,
+                  },
+                  tabSize: 2,
+                  insertSpaces: true,
+                }}
+              />
+            </div>
+          </SidebarInset>
+        </SidebarProvider>
+      </ThemeProvider>
     </>
   );
 }

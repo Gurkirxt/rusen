@@ -21,8 +21,9 @@ import {
 } from "@/components/ui/sidebar"
 
 
-export function AppSidebar({ directoryTree, onFileClick, ...props }: {
+export function AppSidebar({ directoryTree, directoryPath, onFileClick, ...props }: {
   directoryTree: any[];
+  directoryPath: string;
   onFileClick: (path: string) => void;
 } & React.ComponentProps<typeof Sidebar>) {
   return (
@@ -36,7 +37,7 @@ export function AppSidebar({ directoryTree, onFileClick, ...props }: {
                 <Tree
                   key={index}
                   item={item}
-                  basePath="."
+                  basePath={directoryPath}
                   onFileClick={onFileClick}
                 />
               ))}

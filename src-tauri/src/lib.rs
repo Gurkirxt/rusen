@@ -58,11 +58,12 @@ fn get_directory_tree(path: String) -> Result<Vec<serde_json::Value>, String> {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             read_file,
             save_file,
-            get_directory_tree
+            get_directory_tree,
         ])
         .run(tauri::generate_context!())
         .expect("error in file read write!")

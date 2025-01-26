@@ -62,10 +62,10 @@ function App() {
 
   const fileopen = async () => {
     try {
-      const path: string = await open({
+      const path: string = (await open({
         multiple: false,
         directory: true,
-      }) as string;
+      })) ?? '';
       setDirPath(path);
     } catch (error) {
       console.error('Error opening file:', error);

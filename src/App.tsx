@@ -65,6 +65,7 @@ function App() {
       const path: string = (await open({
         multiple: false,
         directory: true,
+        defaultPath: dirPath,
       })) ?? '';
       setDirPath(path);
     } catch (error) {

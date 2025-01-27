@@ -3,10 +3,6 @@
 **Modern Knowledge Management with Rust**  
 _Tauri-powered desktop app for networked note-taking and idea exploration_
 
----
-
-![Rusen Interface](demo.png)  
-_Write, link, and visualize notes with native performance_
 
 ## 🌟 Planned Capabilities
 
@@ -24,25 +20,25 @@ _Write, link, and visualize notes with native performance_
 
 ### **Native Performance**
 
-- Instant search (1M+ notes benchmark)
+- Instant search
 - <100MB memory usage
 - 60 FPS graph rendering
 
 ### **Cross-Platform**
 
 - Windows/macOS/Linux support
-- Android/iOS (beta)
-- Web export (static HTML/JSON)
+- Android/iOS
+- Web export
 
 ---
 
 ## 🚀 Steps to run locally
 
-````bash
+```bash
 # Clone & build (requires Rust + Bun)
 git clone git@github.com:Gurkirxt/rusen.git
 cd rusen && bun install
 
 # Start development mode
-bun run tauri dev ```
-````
+bun run tauri dev
+```

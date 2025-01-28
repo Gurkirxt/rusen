@@ -1,5 +1,6 @@
 import { Fragment, useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import DOMPurify from "dompurify";
 import "./input.css";
 import { AppSidebar } from "@/components/app-sidebar";
 import {
@@ -20,12 +21,16 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { ModeToggle } from "./components/mode-toggle";
 import { CodeEditor } from "./components/editor";
 import { open } from '@tauri-apps/plugin-dialog';
+import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
 
 function App() {
   const [fileContent, setFileContent] = useState("");
   const [filePath, setFilePath] = useState("");
   const [dirPath, setDirPath] = useState("");
   const [directoryTree, setDirectoryTree] = useState<any[]>([]);
+  const [editMode, setEditMode] = useState(false);
+  const [htmlPreview, setHtmlPreview] = useState("");
 
   useEffect(() => {
     invoke<any[]>("get_directory_tree", { path: dirPath })
@@ -43,6 +48,18 @@ function App() {
         .catch(console.error);
     }
   }, [filePath]);
+
+  useEffect(() => {
+    if (!editMode && fileContent) {
+      invoke<string>("markdown_to_html", { md: fileContent })
+        .then((parsedHtml) => {
+          console.log(parsedHtml);
+          const sanitizedHtml = DOMPurify.sanitize(parsedHtml);
+          setHtmlPreview(sanitizedHtml);
+        })
+        .catch(console.error);
+    }
+  }, [editMode, fileContent]);
 
   const handleFileClick = (path: string) => {
     setFilePath(path);
@@ -108,14 +125,25 @@ function App() {
               >
                 Save
               </button>
-              <Button onClick={fileopen}>OPEN </Button>
+              <Button onClick={fileopen}>OPEN</Button>
               <ModeToggle></ModeToggle>
+              <div className="flex items-center space-x-2">
+                <Switch
+                  onCheckedChange={(checked) => setEditMode(checked)}
+                  id="edit-mode"
+                />
+                <Label htmlFor="edit-mode">Edit Mode</Label>
+              </div>
             </header>
-            <div className="flex flex-1 flex-col gap-4 p-4">
-              <CodeEditor
-                value={fileContent}
-                onChange={handleEditorChange}
-              />
+            <div className="flex flex-1 flex-col gap-4 p-4 align-middle items-center">
+              {editMode ? (
+                <CodeEditor value={fileContent} onChange={handleEditorChange} />
+              ) : (
+                <div
+                  className="prose-xl prose-neutral"
+                  dangerouslySetInnerHTML={{ __html: htmlPreview }}
+                ></div>
+              )}
             </div>
           </SidebarInset>
         </SidebarProvider>

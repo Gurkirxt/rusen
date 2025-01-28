@@ -1,3 +1,5 @@
+use pulldown_cmark::{html, Parser};
+
 #[tauri::command]
 fn read_file(path: &str) -> Result<String, String> {
     std::fs::read_to_string(path).map_err(|e| e.to_string())
@@ -54,6 +56,13 @@ fn get_directory_tree(path: String) -> Result<Vec<serde_json::Value>, String> {
 
     Ok(result)
 }
+#[tauri::command]
+fn markdown_to_html(md: &str) -> String {
+    let parser = Parser::new(md);
+    let mut html_output = String::new();
+    html::push_html(&mut html_output, parser);
+    html_output
+}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -64,6 +73,7 @@ pub fn run() {
             read_file,
             save_file,
             get_directory_tree,
+            markdown_to_html,
         ])
         .run(tauri::generate_context!())
         .expect("error in file read write!")

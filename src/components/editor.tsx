@@ -1,22 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import CodeMirror from '@uiw/react-codemirror';
-import { markdown } from '@codemirror/lang-markdown';
-import { languages } from '@codemirror/language-data';
-import { createTheme } from '@uiw/codemirror-themes';
-import { tags as t } from '@lezer/highlight';
+import React, { useEffect, useState } from "react";
+import CodeMirror from "@uiw/react-codemirror";
+import { markdown } from "@codemirror/lang-markdown";
+import { languages } from "@codemirror/language-data";
+import { createTheme } from "@uiw/codemirror-themes";
+import { tags as t } from "@lezer/highlight";
 
 // Create a custom theme that uses shadcn CSS variables
 const customTheme = createTheme({
-  theme: 'light',
+  theme: "light",
   settings: {
-    background: 'hsl(var(--background))',
-    foreground: 'hsl(var(--foreground))',
-    caret: 'hsl(var(--foreground))',
-    selection: 'hsl(var(--muted))',
-    selectionMatch: 'hsl(var(--muted))',
-    lineHighlight: 'hsl(var(--muted))',
-    gutterBackground: 'hsl(var(--background))',
-    gutterForeground: 'hsl(var(--muted-foreground))',
+    background: "hsl(var(--background))",
+    foreground: "hsl(var(--foreground))",
+    caret: "hsl(var(--foreground))",
+    selection: "hsl(var(--muted))",
+    selectionMatch: "hsl(var(--muted))",
+    lineHighlight: "hsl(var(--muted))",
+    gutterBackground: "hsl(var(--background))",
+    gutterForeground: "hsl(var(--muted-foreground))",
   },
   styles: [
     // { tag: t.heading, color: 'hsl(var(--primary))' },
@@ -91,7 +91,7 @@ interface CodeEditorProps {
 const CodeEditor: React.FC<CodeEditorProps> = ({
   value,
   onChange,
-  className = ''
+  className = "",
 }) => {
   const [mounted, setMounted] = useState(false);
 
@@ -99,9 +99,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     setMounted(true);
 
     // Add the CodeMirror specific styles
-    if (!document.getElementById('codemirror-theme-styles')) {
-      const style = document.createElement('style');
-      style.id = 'codemirror-theme-styles';
+    if (!document.getElementById("codemirror-theme-styles")) {
+      const style = document.createElement("style");
+      style.id = "codemirror-theme-styles";
       style.appendChild(document.createTextNode(editorStyles));
       document.head.appendChild(style);
     }
@@ -113,12 +113,14 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
 
   const extensions = [
     markdown({
-      codeLanguages: languages
-    })
+      codeLanguages: languages,
+    }),
   ];
 
   return (
-    <div className={`w-full h-full rounded-md border border-border border-t-0 ${className}`}>
+    <div
+      className={`h-full rounded-md border border-border border-t-0 ${className}`}
+    >
       <CodeMirror
         value={value}
         height="h-fit"

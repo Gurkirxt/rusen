@@ -20,9 +20,9 @@ import { Button } from "./components/ui/button";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ModeToggle } from "./components/mode-toggle";
 import CodeEditor from "./components/editor";
-import { open } from '@tauri-apps/plugin-dialog';
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
+import { open } from "@tauri-apps/plugin-dialog";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 
 function App() {
   const [fileContent, setFileContent] = useState("");
@@ -79,29 +79,34 @@ function App() {
 
   const fileopen = async () => {
     try {
-      const path: string = (await open({
-        multiple: false,
-        directory: true,
-        defaultPath: dirPath,
-      })) ?? '';
+      const path: string =
+        (await open({
+          multiple: false,
+          directory: true,
+          defaultPath: dirPath,
+        })) ?? "";
       setDirPath(path);
     } catch (error) {
-      console.error('Error opening file:', error);
+      console.error("Error opening file:", error);
     }
-  }
+  };
 
   return (
     <>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <SidebarProvider>
-          <AppSidebar directoryTree={directoryTree} directoryPath={dirPath} onFileClick={handleFileClick} />
+          <AppSidebar
+            directoryTree={directoryTree}
+            directoryPath={dirPath}
+            onFileClick={handleFileClick}
+          />
           <SidebarInset>
             <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4 ">
               <SidebarTrigger className="-ml-1" />
               <Separator orientation="vertical" className="mr-2 h-4" />
               <Breadcrumb>
                 <BreadcrumbList>
-                  {filePath.split('/').map((part, index, parts) => {
+                  {filePath.split("/").map((part, index, parts) => {
                     if (dirPath.includes(part)) {
                       return null;
                     }
@@ -109,9 +114,7 @@ function App() {
                     return (
                       <Fragment key={index}>
                         <BreadcrumbItem>
-                          <BreadcrumbLink href="#">
-                            {part}
-                          </BreadcrumbLink>
+                          <BreadcrumbLink href="#">{part}</BreadcrumbLink>
                         </BreadcrumbItem>
                         {index < parts.length - 1 && <BreadcrumbSeparator />}
                       </Fragment>
@@ -137,7 +140,7 @@ function App() {
                 </div>
               </div>
             </header>
-            <div className="flex flex-1 flex-col align-middle items-center">
+            <div className="flex flex-1 flex-col align-middle items-left">
               {editMode ? (
                 <CodeEditor value={fileContent} onChange={handleEditorChange} />
               ) : (
@@ -149,7 +152,7 @@ function App() {
             </div>
           </SidebarInset>
         </SidebarProvider>
-      </ThemeProvider >
+      </ThemeProvider>
     </>
   );
 }

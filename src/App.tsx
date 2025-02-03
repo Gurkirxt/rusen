@@ -20,9 +20,10 @@ import { Button } from "./components/ui/button";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ModeToggle } from "./components/mode-toggle";
 import CodeEditor from "./components/editor";
-import { open } from "@tauri-apps/plugin-dialog";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
+import { open } from '@tauri-apps/plugin-dialog';
+import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
+import { CommandMenu } from "./components/CommandMenu";
 
 function App() {
   const [fileContent, setFileContent] = useState("");
@@ -152,7 +153,8 @@ function App() {
             </div>
           </SidebarInset>
         </SidebarProvider>
-      </ThemeProvider>
+        <CommandMenu></CommandMenu>
+      </ThemeProvider >
     </>
   );
 }

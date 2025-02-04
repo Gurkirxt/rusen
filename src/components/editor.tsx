@@ -3,7 +3,6 @@ import CodeMirror from "@uiw/react-codemirror";
 import { markdown } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
 import { createTheme } from "@uiw/codemirror-themes";
-import { tags as t } from "@lezer/highlight";
 
 // Create a custom theme that uses shadcn CSS variables
 const customTheme = createTheme({

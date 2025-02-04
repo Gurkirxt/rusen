@@ -1,12 +1,10 @@
-import * as React from "react"
+import * as React from "react";
 import {
-  Calculator,
   Search,
-  CreditCard,
   Settings,
   User,
-  ChevronsLeftRightEllipsis
-} from "lucide-react"
+  ChevronsLeftRightEllipsis,
+} from "lucide-react";
 
 import {
   CommandDialog,
@@ -16,23 +14,22 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-  CommandShortcut,
-} from "@/components/ui/command"
+} from "@/components/ui/command";
 
 export function CommandMenu() {
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = React.useState(false);
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault()
-        setOpen((open) => !open)
+        e.preventDefault();
+        setOpen((open) => !open);
       }
-    }
+    };
 
-    document.addEventListener("keydown", down)
-    return () => document.removeEventListener("keydown", down)
-  }, [])
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, []);
 
   return (
     <>
@@ -64,6 +61,5 @@ export function CommandMenu() {
         </CommandList>
       </CommandDialog>
     </>
-  )
+  );
 }
-

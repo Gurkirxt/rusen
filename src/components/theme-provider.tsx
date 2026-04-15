@@ -57,9 +57,9 @@ export function ThemeProvider({
   }
 
   return (
-    <ThemeProviderContext.Provider {...props} value={value}>
+    <ThemeProviderContext value={value} {...props}>
       {children}
-    </ThemeProviderContext.Provider>
+    </ThemeProviderContext>
   )
 }
 
@@ -71,4 +71,3 @@ export const useTheme = () => {
 
   return context
 }
-

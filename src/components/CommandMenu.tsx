@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useState, useEffect } from "react";
 import {
   Search,
   Settings,
@@ -17,9 +17,9 @@ import {
 } from "@/components/ui/command";
 
 export function CommandMenu() {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
@@ -32,34 +32,32 @@ export function CommandMenu() {
   }, []);
 
   return (
-    <>
-      <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Type a command or search..." />
-        <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
-          <CommandGroup heading="Suggestions">
-            <CommandItem>
-              <Search />
-              <span>Search</span>
-            </CommandItem>
-            <CommandItem>
-              <ChevronsLeftRightEllipsis />
-              <span>Mode</span>
-            </CommandItem>
-          </CommandGroup>
-          <CommandSeparator />
-          <CommandGroup heading="Settings">
-            <CommandItem>
-              <User />
-              <span>Profile</span>
-            </CommandItem>
-            <CommandItem>
-              <Settings />
-              <span>Settings</span>
-            </CommandItem>
-          </CommandGroup>
-        </CommandList>
-      </CommandDialog>
-    </>
+    <CommandDialog open={open} onOpenChange={setOpen}>
+      <CommandInput placeholder="Type a command or search..." />
+      <CommandList>
+        <CommandEmpty>No results found.</CommandEmpty>
+        <CommandGroup heading="Suggestions">
+          <CommandItem>
+            <Search />
+            <span>Search</span>
+          </CommandItem>
+          <CommandItem>
+            <ChevronsLeftRightEllipsis />
+            <span>Mode</span>
+          </CommandItem>
+        </CommandGroup>
+        <CommandSeparator />
+        <CommandGroup heading="Settings">
+          <CommandItem>
+            <User />
+            <span>Profile</span>
+          </CommandItem>
+          <CommandItem>
+            <Settings />
+            <span>Settings</span>
+          </CommandItem>
+        </CommandGroup>
+      </CommandList>
+    </CommandDialog>
   );
 }

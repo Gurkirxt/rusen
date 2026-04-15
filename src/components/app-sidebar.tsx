@@ -1,4 +1,3 @@
-import * as React from "react"
 import { ChevronRight, File, Folder } from "lucide-react"
 
 import {
@@ -13,13 +12,11 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarMenu,
-  // SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
   SidebarRail,
 } from "@/components/ui/sidebar"
-
 
 export function AppSidebar({ directoryTree, directoryPath, onFileClick, ...props }: {
   directoryTree: any[];

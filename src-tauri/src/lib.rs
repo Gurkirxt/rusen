@@ -1,4 +1,10 @@
-use pulldown_cmark::{html, Parser};
+mod theme;
+mod cache;
+
+#[tauri::command]
+fn parse_itermcolors(name: &str, content: &str) -> Result<theme::Base16Theme, String> {
+    theme::parse_itermcolors(name, content)
+}
 
 #[tauri::command]
 fn read_file(path: &str) -> Result<String, String> {
@@ -58,10 +64,7 @@ fn get_directory_tree(path: String) -> Result<Vec<serde_json::Value>, String> {
 }
 #[tauri::command]
 fn markdown_to_html(md: &str) -> String {
-    let parser = Parser::new(md);
-    let mut html_output = String::new();
-    html::push_html(&mut html_output, parser);
-    html_output
+    cache::render_markdown(md)
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -74,6 +77,7 @@ pub fn run() {
             save_file,
             get_directory_tree,
             markdown_to_html,
+            parse_itermcolors,
         ])
         .run(tauri::generate_context!())
         .expect("error in file read write!")

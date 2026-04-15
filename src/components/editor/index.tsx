@@ -3,6 +3,10 @@ import CodeMirror from "@uiw/react-codemirror";
 import { markdown } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
 import { createTheme } from "@uiw/codemirror-themes";
+import { EditorView } from "@codemirror/view";
+import { indentUnit } from "@codemirror/language";
+import { useSettingsStore } from "@/stores/settings-store";
+import { livePreviewPlugin } from "./decorations";
 
 const customTheme = createTheme({
   theme: "light",
@@ -23,6 +27,10 @@ const editorStyles = `
 .cm-editor {
   background-color: var(--background) !important;
   color: var(--foreground) !important;
+  height: 100%;
+}
+.cm-scroller {
+  overflow: auto;
 }
 .cm-editor .cm-gutters {
   background-color: var(--background) !important;
@@ -50,8 +58,22 @@ const editorStyles = `
 .cm-editor .cm-line {
   color: var(--foreground) !important;
 }
-.cm-editor .cm-content {
-  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+.cm-hidden-mark {
+  opacity: 0.3;
+  font-size: 0.8em;
+}
+.cm-wikilink {
+  color: var(--primary);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.cm-wikilink-active {
+  color: var(--primary);
+  background: color-mix(in oklch, var(--primary) 20%, transparent);
+}
+.cm-task-checkbox {
+  display: inline-block;
+  margin-right: 4px;
 }
 `;
 
@@ -61,16 +83,12 @@ interface CodeEditorProps {
   className?: string;
 }
 
-export default function CodeEditor({
-  value,
-  onChange,
-  className = "",
-}: CodeEditorProps) {
+export default function CodeEditor({ value, onChange, className = "" }: CodeEditorProps) {
   const [mounted, setMounted] = useState(false);
+  const { lineNumbers, wordWrap, fontSize, tabSize } = useSettingsStore();
 
   useEffect(() => {
     setMounted(true);
-
     if (!document.getElementById("codemirror-theme-styles")) {
       const style = document.createElement("style");
       style.id = "codemirror-theme-styles";
@@ -79,33 +97,34 @@ export default function CodeEditor({
     }
   }, []);
 
-  if (!mounted) {
-    return null;
-  }
+  if (!mounted) return null;
 
   const extensions = [
-    markdown({
-      codeLanguages: languages,
+    markdown({ codeLanguages: languages }),
+    livePreviewPlugin,
+    EditorView.theme({
+      "&": { fontSize: `${fontSize}px` },
+      ".cm-content": { fontFamily: "var(--font-mono), ui-monospace, monospace" },
     }),
+    indentUnit.of(" ".repeat(tabSize)),
+    ...(wordWrap ? [EditorView.lineWrapping] : []),
   ];
 
   return (
-    <div
-      className={`h-full rounded-md border border-border border-t-0 ${className}`}
-    >
+    <div className={`h-full ${className}`}>
       <CodeMirror
         value={value}
-        height="h-fit"
+        height="100%"
         theme={customTheme}
         onChange={onChange}
         extensions={extensions}
-        className="overflow-hidden rounded-md"
+        className="h-full overflow-hidden"
         basicSetup={{
-          lineNumbers: true,
+          lineNumbers,
           highlightActiveLineGutter: true,
           highlightSpecialChars: true,
           history: true,
-          foldGutter: true,
+          foldGutter: false,
           drawSelection: true,
           dropCursor: true,
           allowMultipleSelections: true,
@@ -113,18 +132,18 @@ export default function CodeEditor({
           syntaxHighlighting: true,
           bracketMatching: true,
           closeBrackets: true,
-          autocompletion: true,
+          autocompletion: false,
           rectangularSelection: true,
-          crosshairCursor: true,
+          crosshairCursor: false,
           highlightActiveLine: true,
           highlightSelectionMatches: true,
           closeBracketsKeymap: true,
           defaultKeymap: true,
           searchKeymap: true,
           historyKeymap: true,
-          foldKeymap: true,
-          completionKeymap: true,
-          lintKeymap: true,
+          foldKeymap: false,
+          completionKeymap: false,
+          lintKeymap: false,
         }}
       />
     </div>

@@ -4,12 +4,15 @@ use lru::LruCache;
 use std::num::NonZeroUsize;
 use regex::Regex;
 use pulldown_cmark::{html, Parser};
+use std::sync::LazyLock;
 
 #[allow(dead_code)]
 pub struct CacheState {
     pub db: Mutex<Connection>,
     pub lru: Mutex<LruCache<String, String>>,
 }
+
+const LRU_CAPACITY: usize = 100;
 
 #[allow(dead_code)]
 impl CacheState {
@@ -35,16 +38,23 @@ impl CacheState {
             [],
         )?;
 
+        let capacity = NonZeroUsize::new(LRU_CAPACITY)
+            .expect("LRU_CAPACITY must be non-zero (compile-time constant)");
+
         Ok(Self {
             db: Mutex::new(conn),
-            lru: Mutex::new(LruCache::new(NonZeroUsize::new(100).unwrap())),
+            lru: Mutex::new(LruCache::new(capacity)),
         })
     }
 }
 
+static WIKILINK_RE: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r"\[\[(.*?)\]\]")
+        .expect("wikilink regex is a compile-time constant and must be valid")
+});
+
 pub fn preprocess_wikilinks(md: &str) -> String {
-    let re = Regex::new(r"\[\[(.*?)\]\]").unwrap();
-    re.replace_all(md, |caps: &regex::Captures| {
+    WIKILINK_RE.replace_all(md, |caps: &regex::Captures| {
         let name = &caps[1];
         format!("<a href=\"rusen://note/{}\" class=\"internal-link\">{}</a>", name, name)
     }).to_string()
@@ -122,12 +132,13 @@ mod tests {
 
     #[test]
     fn test_cache_state_creation() {
-        let cache = CacheState::new(":memory:").expect("should create in-memory cache");
-        let db = cache.db.lock().unwrap();
-        let mut stmt = db.prepare("SELECT name FROM sqlite_master WHERE type='table'").unwrap();
+        let cache = CacheState::new(":memory:").expect("in-memory db should work in tests");
+        let db = cache.db.lock().expect("mutex not poisoned in test");
+        let mut stmt = db.prepare("SELECT name FROM sqlite_master WHERE type='table'")
+            .expect("query should work in test");
         let tables: Vec<String> = stmt
             .query_map([], |row| row.get(0))
-            .unwrap()
+            .expect("query_map should work in test")
             .filter_map(|r| r.ok())
             .collect();
         assert!(tables.contains(&"notes_cache".to_string()));
@@ -150,7 +161,6 @@ mod tests {
         assert!(!html.is_empty());
         assert!(html.contains("<h2>"));
         assert!(html.contains("internal-link"));
-        // ~600 lines of markdown should render in well under 100ms
         assert!(
             elapsed.as_millis() < 100,
             "Rendering took {}ms, expected <100ms",

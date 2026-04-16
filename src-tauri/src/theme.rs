@@ -18,13 +18,12 @@ pub fn parse_itermcolors(name: &str, content: &str) -> Result<Base16Theme, Strin
     let mut colors = HashMap::new();
     let mut color_index = 0;
 
-    // We'll just map the first 16 ANSI colors to base00-base0F for simplicity
     for i in 0..16 {
         let key = format!("Ansi {} Color", i);
         if let Some(color_dict) = dict.get(&key).and_then(|v| v.as_dictionary()) {
-            let r = color_dict.get("Red Component").and_then(|v| v.as_real()).unwrap_val_or_zero();
-            let g = color_dict.get("Green Component").and_then(|v| v.as_real()).unwrap_val_or_zero();
-            let b = color_dict.get("Blue Component").and_then(|v| v.as_real()).unwrap_val_or_zero();
+            let r = color_dict.get("Red Component").and_then(|v| v.as_real()).unwrap_or(0.0);
+            let g = color_dict.get("Green Component").and_then(|v| v.as_real()).unwrap_or(0.0);
+            let b = color_dict.get("Blue Component").and_then(|v| v.as_real()).unwrap_or(0.0);
 
             let hex = format!(
                 "#{:02X}{:02X}{:02X}",
@@ -38,7 +37,6 @@ pub fn parse_itermcolors(name: &str, content: &str) -> Result<Base16Theme, Strin
         }
     }
 
-    // Fallback if Ansi colors are missing
     if colors.is_empty() {
         return Err("No Ansi colors found in theme".to_string());
     }
@@ -47,16 +45,6 @@ pub fn parse_itermcolors(name: &str, content: &str) -> Result<Base16Theme, Strin
         name: name.to_string(),
         colors,
     })
-}
-
-trait UnwrapValOrZero {
-    fn unwrap_val_or_zero(self) -> f64;
-}
-
-impl UnwrapValOrZero for Option<f64> {
-    fn unwrap_val_or_zero(self) -> f64 {
-        self.unwrap_or(0.0)
-    }
 }
 
 #[cfg(test)]
@@ -81,8 +69,11 @@ mod tests {
 </dict>
 </plist>"#;
 
-        let theme = parse_itermcolors("Test Theme", xml).unwrap();
+        let theme = parse_itermcolors("Test Theme", xml).expect("should parse valid plist");
         assert_eq!(theme.name, "Test Theme");
-        assert_eq!(theme.colors.get("base00").unwrap(), "#4C3319");
+        assert_eq!(
+            theme.colors.get("base00").expect("base00 should exist"),
+            "#4C3319"
+        );
     }
 }
